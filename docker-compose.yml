@@ -1,0 +1,27 @@
+---
+version: "3.7"
+
+services:
+  database:
+    image: mongo:5.0.6
+    ports:
+      - "27017:27017"
+    volumes:
+      - my-datavolume:/data/db
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: on-failure
+    command: python main_db.py
+    environment:
+      - MONGO_URL=mongodb://database:27017
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./app:/app
+    depends_on:
+      - database
+volumes:
+  my-datavolume:
